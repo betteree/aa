@@ -1,6 +1,6 @@
 import TcpServer
 import JsonParser
-import UserController
+from controller import UserController, AlarmController, LocationController
 
 class PatientView:
     def __init__(self, data):
@@ -51,13 +51,13 @@ class GuardianView:
         return result
 
     def __tryLocation(self, body):
-        userController = UserController(body)
-        result = userController.tryLocation()
+        locationController =LocationController(body)
+        result = locationController.tryLocation()
         return result
 
     def __tryalarm(self, body):
-        userController = UserController(body)
-        result = userController.tryalarm()
+        alarmController = AlarmController(body)
+        result = alarmController.tryalarm()
         return result
                                         
     def __tryUserInfo(self, body):
