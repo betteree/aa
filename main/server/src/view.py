@@ -119,4 +119,6 @@ class View:
         result=patientView.run()      
         return result
 
+    def runServer(self):  #app가 무한이 돈다했으니 그게 돌아가는 함수
+        pass
 
