@@ -2,6 +2,7 @@ import TcpServer
 import JsonParser
 from controller import UserController, AlarmController, LocationController
 
+
 class PatientView:
     def __init__(self, data):
         self.__data = data
@@ -15,7 +16,7 @@ class GuardianView:
     def __init__(self, data):
         self.__data = data
         pass
-
+    
     # request = "login, sign_up, location, alarm, user_info"
     def run(self):
         requset = self.__data["header"]["request"]
@@ -23,7 +24,6 @@ class GuardianView:
         result = self.__checkRequest(requset, body)
         return result
 
-        
     def __checkRequest(self, requset, body):
         if requset == "login":
             result = self.__tryLogin(body)
