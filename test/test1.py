@@ -1,5 +1,6 @@
 from socket import socket 
 import queue
+import threading
 
 
 class StreamTCPsocket():
@@ -194,5 +195,10 @@ class RealTimeServiceASGI():
                 print("큐에 전송할 데이터가 없습니다.")
    
 
-    def clientHandleThread():
-        class 
+    def clientHandleThread(client_socket, client_address):
+        while True:
+            try:
+                data = client_socket.recv()
+                if not data:
+                    break
+                client
