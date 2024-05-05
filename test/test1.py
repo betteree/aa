@@ -1,6 +1,6 @@
-from socket import socket 
+from socket import socket, AF_INET, SOCK_STREAM
+from threading import Thread
 import queue
-import threading
 
 #받고 보내고
 class StreamTCPsocket():
@@ -212,7 +212,7 @@ class RealTimeServiceASGI():
                 client_socket.close()
 
     #소켓끼리 데이터 송수신
-    def recvThread(StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
+    def recvThread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
         while True:
             if not ChattingRoom.is_queue_empty():
                 data = StreamTCPsocket.recv()
@@ -235,9 +235,11 @@ class RealTimeServiceASGI():
    
 
     def clientHandleThread(client_socket, client_address):
+        server_socket = self.__socket_open(host=host, port=port)
         while True:
-            try:
-                data = client_socket.recv()
-                if not data:
-                    break
-                client
+            client_socket, addr = server_socket.accept()
+            client = self.__make_client(client_socket, addr)
+            handler = Thread(target=func, args=(app, client, ))
+            handler.start() 
+            __client_socket.append(handler)
+    
