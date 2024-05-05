@@ -2,7 +2,7 @@ from socket import socket
 import queue
 import threading
 
-
+#받고 보내고
 class StreamTCPsocket():
     def __init__(self,socket:socket,address):
         self.__socket=socket 
@@ -17,6 +17,8 @@ class StreamTCPsocket():
         return data
     
 
+
+#string -> dict , dict ->string
 class RealtimeServiceProtocol():
     def __init__(self,socket:socket,address):
         self.__socket=socket 
@@ -73,6 +75,7 @@ class RealtimeServiceProtocol():
         return str_data    
 
 
+#채팅방 - 환자와 보호자 짝찾아주는 클래스? 하나의 방 느낌
 class ChattingRoom():
 
     def __init__(self, pid):
@@ -106,11 +109,47 @@ class ChattingRoom():
         self.__send_que.put(data)
         return
 
+# 채팅룸을 관리하고 인터페이스를 제공하는 클래스
+class ChattingRoomAPI:
+    def __init__(self):
+        self.chattingrooms = []  # 채팅룸 리스트
+
+    #채팅룸 찾기
+    def fineroom(self, room_name):
+        room = self.getroom(room_name) 
+        if not room:
+            room = self.createroom(room_name)
+        return room
+
+    #없으면 생성
+    def createRoom(self, room_name):
+        newroom = ChattingRoom(room_name)
+        self.chattingrooms.append(new_room)
+        return newroom
+   
+    #채팅룸 반환
+    def getroom(self, room_name):
+        for room in self.chattingrooms:
+            if room.get_pid() == room_name:
+                return room
+        return None
+
+    #클라이언트 추가하기
+    def addclientroom(self, room_name, client):
+        room = self.createroom(room_name)
+        room.add_client(client)
+
+    #비어있는지 확인하기
+    def roomEmpty(self, room_name):
+        room = self.findroom(room_name)
+        return room.is_empty()
+    
 
 
+#로그인 및 회원가입 컨트롤러
 class LoginController():
 
-
+    #리스트 초기화 해주기
     def __init__(self):
         self.id_list = []
         self.pw_list = []
