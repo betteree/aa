@@ -40,21 +40,21 @@ class RealtimeServiceProtocol():
         dict_data = {}
         #로그인
         if method == "Login":
-            dict_data = {"method":"",
-                         "ID" :"",
-                         "PW" :"",
+            dict_data = {"method":"Login",
+                         "ID" :"assd",
+                         "PW" :"dsagdsag",
             }
 
         #gps데이터 전송
         elif method == "Gps":
-            dict_data = {"method":"",
-                         "X" :"",
-                         "Y" :"",
+            dict_data = {"method":"Gps",
+                         "X" :"13.00",
+                         "Y" :"14.00",
             }
 
         #회원가입
         elif method == "SignUp":
-            dict_data ={"method":"",
+            dict_data ={"method":"SignUp",
                         "name":"김나은",
                         "guardNumber": "01030236298",
                         "patientNumber":"01011235677",
@@ -115,7 +115,7 @@ class ChattingRoomAPI:
         self.chattingrooms = []  # 채팅룸 리스트
 
     #채팅룸 찾기
-    def fineroom(self, room_name):
+    def fineRoom(self, room_name):
         room = self.getroom(room_name) 
         if not room:
             room = self.createroom(room_name)
@@ -128,14 +128,14 @@ class ChattingRoomAPI:
         return newroom
    
     #채팅룸 반환
-    def getroom(self, room_name):
+    def getRoom(self, room_name):
         for room in self.chattingrooms:
             if room.get_pid() == room_name:
                 return room
         return None
 
     #클라이언트 추가하기
-    def addclientroom(self, room_name, client):
+    def addclientRoom(self, room_name, client):
         room = self.createroom(room_name)
         room.add_client(client)
 
@@ -158,7 +158,7 @@ class LoginController():
         self.guardian_number = []
         self.address_list = []
         
-    def sign_up(self,data:dict):
+    def signUp(self,data:dict):
         id_value = data.get('id')
         pw_value = data.get('pw')
         name_value = data.get('name')
