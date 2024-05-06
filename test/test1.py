@@ -9,11 +9,11 @@ class StreamTCPsocket():
         self.__address=address
 
     def recv(self):
-        data=self.__socket.recv()
+        data=self.__socket.recv(1024)
         return data
     
-    def send(self):
-        data= self.__socket.send()
+    def send(self, send_data):
+        data= self.__socket.send(send_data)
         return data
     
 
@@ -144,72 +144,33 @@ class ChattingRoomAPI:
         room = self.findroom(room_name)
         return room.is_empty()
     
-
-
-#로그인 및 회원가입 컨트롤러
-class LoginController():
-
-    #리스트 초기화 해주기
-    def __init__(self):
-        self.id_list = []
-        self.pw_list = []
-        self.name_list = []
-        self.patient_number = []
-        self.guardian_number = []
-        self.address_list = []
-        
-    def signUp(self,data:dict):
-        id_value = data.get('id')
-        pw_value = data.get('pw')
-        name_value = data.get('name')
-        patient_number_value = data.get('patient_number')
-        guardian_number_value = data.get('guardian_number')
-        address_value = data.get('address')
-
-
-    if id_value and pw_value and name_value and patient_number_value and guardian_number_value and address_value:
-            self.id_list.append(id_value)
-            self.pw_list.append(pw_value)
-            self.name_list.append(name_value)
-            self.patient_number.append(patient_number_value)
-            self.guardian_number.append(guardian_number_value)
-            self.address_list.append(address_value)
-    else:
-        print("값을 모두 입력 바람")                       
-        
-    
-    def login(self, id_value, pw_value):
-        if id_value in self.id_list:
-            index = self.id_list.index(id_value)
-            if self.pw_list[index] == pw_value:
-                print("로그인 성공")
-            else:
-                print("로그인 실패")
-
-        else:
-            print("아이디없음")
-
+import time
 #비동기서버 만드는 인터페이스
 class RealTimeServiceASGI():
+    def __init__(self):
+        pass
 
-    def __init__(self,socket:socket,address):
-        self.__socket=socket 
-        self.__address=address 
+    def run_server(self):
+        print("[   start server")
+        self.__start_server()
+        
 
-    def socketServer(self):
-        server_socket = socket.__socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.bind('localhost',9999)
+    def __start_server(self):
+        ip = "127.0.0.1"
+        port = 9999
+        server_socket = socket(AF_INET, SOCK_STREAM)
+        server_socket.bind(('127.0.0.1',9999))
+        print(f"ip : {port}  | port = {str(port)}")
         server_socket.listen()
 
         while True:
             client_socket, client_addr = server_socket.accept()
-            try:
-                data = client_socket.recv()
-                if not data:
-                    continue
-                client_socket.send()
-            finally:
-                client_socket.close()
+            streamTCPSocket = StreamTCPsocket(socket=client_socket,
+                                                address=client_addr)
+            func = self.__clientHandleThread
+            clientHandleThread = Thread(target=func, 
+                                     args=(streamTCPSocket,))
+            clientHandleThread.start()
 
     #소켓끼리 데이터 송수신
     def recvThread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
@@ -234,12 +195,32 @@ class RealTimeServiceASGI():
                 print("큐에 전송할 데이터가 없습니다.")
    
 
-    def clientHandleThread(client_socket, client_address):
-        server_socket = self.__socket_open(host=host, port=port)
-        while True:
-            client_socket, addr = server_socket.accept()
-            client = self.__make_client(client_socket, addr)
-            handler = Thread(target=func, args=(app, client, ))
-            handler.start() 
-            __client_socket.append(handler)
-    
+    def __clientHandleThread(self, streamTCPSocket:StreamTCPsocket):
+        #print("hello my server")
+        #recv_data = streamTCPSocket.recv()
+        #print(recv_data)
+        #time.sleep(5)
+        #send_data = "hello"
+        #send_data = send_data.encode()
+        #streamTCPSocket.send(send_data)
+        #print("send clear")
+        # 1. recv 한번 받기
+        # 2. recv 받은 데이터 RSTP에서 데이터 변환
+        # 3. 변환한 데이터 가지고 체팅방 찾기
+        # 4. 채팅방 찾으면 들어가기
+        # 5. 없으면 만들기
+        # 6. recvTHread만들고
+        # 7. sendThread 만들고
+        # 8. 생성한 각강의 스레드 start()
+        # 9. 대기 하다가 join()
+        # 10. end of procedure
+        return
+
+if __name__ == "__main__":
+    realTimeServiceASGI = RealTimeServiceASGI()
+    realTimeServiceASGI.run_server()
+
+    logincontroller = LoginController()
+    data = {''} # 가짜 데이터
+    result = logincontroller.try_login(data)
+    print(result)
