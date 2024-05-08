@@ -109,6 +109,39 @@ class ChattingRoom():
         self.__send_que.put(data)
         return
 
+class Client_Model():
+    def __init__(self):
+        self.__id = 0
+        self.__pw = "default"
+        self.__patientNumber = '01012345678'
+        self.__guardianNumber = '01012345555'
+        self.__name ="홍길동"
+        self.__address="대구광역시"
+
+    def set_id(self, id):
+        self.__id = id
+        return
+
+    def set_pw(self, pw):
+        self.__pw = pw
+        return
+    
+    def set_pw(self, pw):
+        self.__pw = pw
+        return
+
+    def get_id(self):
+        return self.__id
+
+    def get_pw(self):
+        return self.__pw
+
+class LoginController:
+    pass
+
+
+
+
 # 채팅룸을 관리하고 인터페이스를 제공하는 클래스
 class ChattingRoomAPI:
     def __init__(self):
