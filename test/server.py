@@ -109,36 +109,6 @@ class ChattingRoom():
         self.__send_que.put(data)
         return
 
-class Client_Model():
-    def __init__(self):
-        self.__id = 0
-        self.__pw = "default"
-        self.__patientNumber = '01012345678'
-        self.__guardianNumber = '01012345555'
-        self.__name ="홍길동"
-        self.__address="대구광역시"
-
-    def set_id(self, id):
-        self.__id = id
-        return
-
-    def set_pw(self, pw):
-        self.__pw = pw
-        return
-    
-    def set_pw(self, pw):
-        self.__pw = pw
-        return
-
-    def get_id(self):
-        return self.__id
-
-    def get_pw(self):
-        return self.__pw
-
-class LoginController:
-    pass
-
 
 
 
@@ -184,7 +154,7 @@ class RealTimeServiceASGI():
         pass
 
     def run_server(self):
-        print("[   start server")
+        print("[ start server")
         self.__start_server()
         
 
@@ -230,13 +200,13 @@ class RealTimeServiceASGI():
 
     def __clientHandleThread(self, streamTCPSocket:StreamTCPsocket):
         #print("hello my server")
-        #recv_data = streamTCPSocket.recv()
-        #print(recv_data)
-        #time.sleep(5)
+        recv_data = streamTCPSocket.recv()
+        print(recv_data)
+        time.sleep(5)
         #send_data = "hello"
         #send_data = send_data.encode()
         #streamTCPSocket.send(send_data)
-        #print("send clear")
+        print("send clear")
         # 1. recv 한번 받기
         # 2. recv 받은 데이터 RSTP에서 데이터 변환
         # 3. 변환한 데이터 가지고 체팅방 찾기

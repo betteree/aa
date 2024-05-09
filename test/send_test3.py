@@ -6,7 +6,7 @@ def main():
     client_socket = socket(AF_INET, SOCK_STREAM)
     client_socket.connect((HOST, PORT))
 
-    message = "x:123 y:68"
+    message = "x:170 y:40"
     message = message.encode()
 
     client_socket.send(message)
