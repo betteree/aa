@@ -109,8 +109,89 @@ class ChattingRoom():
         self.__send_que.put(data)
         return
 
+class ClientModel():
+    def __init__(self):
+        self.__id="ddfg"
+        self.__pw="avcd"
+        self.__address =="대구광역시"
+        self.__name =="홍길동"
+        self.__patientNumber="01012345678"
+        self.__guardianNumber="01009876543"
+    
+    def set_id(self, id):
+        self.__id = id
+        return
+
+    def set_pw(self,pw):
+        self.__pw= pw
+        return
+    
+    def set_address(self,address):
+        self.__address = address
+        return
+    
+    def set_name(self,name):
+        self.__name=name
+        return
+
+    def set_patientNumber (self,patientNumber):
+        self.__patientNumber = patientNumber
+        return
+
+    def set_guardianNumber (self, guardianNumber):
+        self.__guardianNumber = guardianNumber
+        return
+
+    def get_id(self):
+        return self.__id
+
+    def get_pw(self):
+        return self.__pw
+
+    def get_name(self):
+        return self.__name
+
+    def get_address(self):
+        return self.__address
+
+    def get_patientNumber(self):
+        return self.__patientNumber
+
+    def get_guardianNumber(self):
+        return self.__guardianNumber
 
 
+class DB_API():
+    def __init__(self):
+        pass
+
+class LoginController():
+    def __init__(self,DB):
+        self.__DB=DB
+        return
+    
+    def try_login(self,id,pw):
+        newClient =ClientModel()
+        newClient.set_id(id)
+        newClient.set_pw(pw)
+    
+        if self.__db.findClient(id=newClient.getid()):
+            print("true")
+        else:
+            print("false")
+    
+    def signUp(self,id,pw,name,address,patientNumber,guardianNumber):
+        newClient= ClientModel()
+        newClient.get_id(id)
+        newClient.get_pw(pw)
+        newClient.get_name(name)
+        newClient.get_address(address)
+        newClinet.get_patientNumber(patientNumber)
+        newClient.get_guardianNumber(guardianNumber)
+        
+        
+
+    
 
 # 채팅룸을 관리하고 인터페이스를 제공하는 클래스
 class ChattingRoomAPI:
