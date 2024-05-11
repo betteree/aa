@@ -80,8 +80,10 @@ class ChattingRoom():
 
     def __init__(self, pid):
         self.__pid = pid
-        self.__recv_que = queue.Queue()
-        self.__send_que = queue.Queue()
+        self.__recv_que_p = queue.Queue()
+        self.__send_que_p = queue.Queue()
+        self.__recv_que_g = queue.Queue()
+        self.__recv_que_g = queue.Queue()
         self.__client = []
 
     def input_client(self, client):
@@ -93,21 +95,38 @@ class ChattingRoom():
 
     def get_pid(self):
         return self.__pid
-    
-   #큐에 값 넣어주기 
-    def is_queue_empty(self,):
-        result = self.__send_que.empty()
+
+            
+   #큐에 비어있는지? 
+    def patient_is_queue_empty(self):
+        result = self.__send_que_p.empty()
         return result
 
     #큐에서 값 빼기
-    def dequeue(self,):
-        data = self.__recv_que.get()
+    def patient_dequeue(self,):
+        data = self.__recv_que_p.get()
         return data
    
     #큐에서 값 빼기
-    def enqueue(self, data):
-        self.__send_que.put(data)
+    def p_enqueue(self, data):
+        self.__send_que_p.put(data)
         return
+
+    #환자쪽############
+    def guardian_is_queue_empty(self):
+        result = self.__send_que_g.empty()
+        return result
+
+    #큐에서 값 빼기
+    def guardian_dequeue(self,):
+        data = self.__recv_que_g.get()
+        return data
+   
+    #큐에서 값 빼기
+    def guardian_enqueue(self, data):
+        self.__send_que_g.put(data)
+        return
+
 
 class ClientModel():
     def __init__(self):
@@ -174,11 +193,18 @@ class LoginController():
         newClient =ClientModel()
         newClient.set_id(id)
         newClient.set_pw(pw)
-    
-        if self.__db.findClient(id=newClient.getid()):
-            print("true")
+
+            
+        clientInfo = self.__db.findClient(id=newClient.getid())
+        if clientInfo:
+            print("아이디 존재 o")
+            db_pw= clientInfo['password']
+            if db_pw == pw:
+                print("로그인성공")
+            else:
+                print("비밀번호 올바르지 않습니다 ")
         else:
-            print("false")
+            print("아이디 존재 x")
     
     def signUp(self,id,pw,name,address,patientNumber,guardianNumber):
         newClient= ClientModel()
