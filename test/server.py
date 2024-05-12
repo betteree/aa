@@ -95,35 +95,57 @@ class ChattingRoom():
     def get_pid(self):
         return self.__pid
 
-            
+    ############환자###############        
    #큐에 비어있는지? 
     def patient_is_queue_empty(self):
         result = self.__send_que_p.empty()
         return result
 
-    #큐에서 값 빼기
-    def patient_dequeue(self,):
+    #recv큐에서 값 빼기
+    def patient_recv_dequeue(self,):
         data = self.__recv_que_p.get()
         return data
    
-    #큐에서 값 넣기
-    def patient_enqueue(self, data):
-        self.__send_que_p.put(data)
+    #recv큐에 값 넣기
+    def patient_recv_enqueue(self, data):
+        self.__recv_que_p.put(data)
         return
 
-    #환자쪽############
+    #send큐에 값 빼기 
+    def patient_send_dequeue(self,):
+        data = self.__send_que_p.get()
+        return data
+   
+    #send큐에 값 넣기 
+    def patient_send_enqueue(self, data):
+        self.__send_que_p.put(data)
+        return
+    
+    #############보호자쪽###############
+
+    #보호자 큐 비어있는지 확인 
     def guardian_is_queue_empty(self):
         result = self.__send_que_g.empty()
         return result
 
-    #큐에서 값 빼기
-    def guardian_dequeue(self,):
+    #recv 큐에서 값 빼기
+    def guardian_recv_dequeue(self,):
         data = self.__recv_que_g.get()
         return data
    
-    #큐에서 값 넣기
-    def guardian_enqueue(self, data):
-        self.__send_que_g.put(data)
+    #recv 큐에서 값 넣기
+    def guardian_recv_enqueue(self, data):
+        self.__recv_que_g.put(data)
+        return
+
+    #send 큐에서 값 빼기
+    def guardian_send_dequeue(self,):
+        data = self.__send_que_p.get()
+        return data
+   
+    #send큐에서 값 넣기
+    def guardian_send_enqueue(self, data):
+        self.__send_que_p.put(data)
         return
 
 
@@ -265,7 +287,7 @@ class RealTimeServiceASGI:
         ip = "127.0.0.1"
         port = 9999
         server_socket = socket(AF_INET, SOCK_STREAM)
-        server_socket.bind(('127.0.0.1',9999))
+        server_socket.bind(('#127.0.0.1',9999))
         print(f"ip : {port}  | port = {str(port)}")
         server_socket.listen()
 
@@ -291,7 +313,7 @@ class RealTimeServiceASGI:
 
     def send_thread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
         while True:
-            if not ChattingRoom.is_queue_empty():
+            if not CattingRoom.is_queue_empty():
                 data = ChattingRoom.dequeue()
                 if data == True:
                     ChattingRoom.dequeqe(data)
