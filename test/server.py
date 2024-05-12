@@ -13,19 +13,18 @@ class StreamTCPsocket():
         return data
     
     def send(self, send_data):
-        data= self.__socket.send(send_data)
-        return data
+        self.__socket.send(send_data)
     
 
 
 #string -> dict , dict ->string
-class RealtimeServiceProtocol():
+class RealtimeServiceProtocol:
     def __init__(self,socket:socket,address):
         self.__socket=socket 
         self.__address=address
     
     # string data를 dict로 바꾸는 친구 
-    def str_todict(self,data:str):
+    def str_to_dict(self,data:str):
         list_data=data.split(" ") 
         dict_data = self.__method_checker(list_data[0])
         i = 1
@@ -67,7 +66,7 @@ class RealtimeServiceProtocol():
         return dict_data
 
     # string data를 dict로 바꾸는 친구 
-    def dict_tostr(self, data:dict):
+    def dict_to_str(self, data:dict):
         str_data = ""
         for value in data.values:
             str_data += value + " "
@@ -87,7 +86,7 @@ class ChattingRoom():
         self.__client = []
 
     def input_client(self, client):
-        self.__client.append()
+        self.__client.append(client)
         return 
 
     def set_pid(self, pid):
@@ -107,8 +106,8 @@ class ChattingRoom():
         data = self.__recv_que_p.get()
         return data
    
-    #큐에서 값 빼기
-    def p_enqueue(self, data):
+    #큐에서 값 넣기
+    def patient_enqueue(self, data):
         self.__send_que_p.put(data)
         return
 
@@ -122,7 +121,7 @@ class ChattingRoom():
         data = self.__recv_que_g.get()
         return data
    
-    #큐에서 값 빼기
+    #큐에서 값 넣기
     def guardian_enqueue(self, data):
         self.__send_que_g.put(data)
         return
@@ -206,57 +205,54 @@ class LoginController():
         else:
             print("아이디 존재 x")
     
-    def signUp(self,id,pw,name,address,patientNumber,guardianNumber):
+    def sign_up(self,id,pw,name,address,patientNumber,guardianNumber):
         newClient= ClientModel()
         newClient.get_id(id)
         newClient.get_pw(pw)
         newClient.get_name(name)
         newClient.get_address(address)
-        newClinet.get_patientNumber(patientNumber)
+        newClient.get_patientNumber(patientNumber)
         newClient.get_guardianNumber(guardianNumber)
         
         
-
-    
-
-# 채팅룸을 관리하고 인터페이스를 제공하는 클래스
+    # 채팅룸을 관리하고 인터페이스를 제공하는 클래스
 class ChattingRoomAPI:
     def __init__(self):
         self.chattingrooms = []  # 채팅룸 리스트
 
     #채팅룸 찾기
-    def fineRoom(self, room_name):
-        room = self.getroom(room_name) 
+    def fine_room(self, room_name):
+        room = self.get_room(room_name) 
         if not room:
             room = self.createroom(room_name)
         return room
 
     #없으면 생성
-    def createRoom(self, room_name):
+    def create_room(self, room_name):
         newroom = ChattingRoom(room_name)
-        self.chattingrooms.append(new_room)
+        self.chattingrooms.append(newroom)
         return newroom
    
     #채팅룸 반환
-    def getRoom(self, room_name):
+    def get_room(self, room_name):
         for room in self.chattingrooms:
             if room.get_pid() == room_name:
                 return room
         return None
 
     #클라이언트 추가하기
-    def addclientRoom(self, room_name, client):
-        room = self.createroom(room_name)
+    def add_client_room(self, room_name, client):
+        room = self.create_room(room_name)
         room.add_client(client)
 
     #비어있는지 확인하기
-    def roomEmpty(self, room_name):
-        room = self.findroom(room_name)
+    def room_empty(self, room_name):
+        room = self.find_room(room_name)
         return room.is_empty()
     
 import time
 #비동기서버 만드는 인터페이스
-class RealTimeServiceASGI():
+class RealTimeServiceASGI:
     def __init__(self):
         pass
 
@@ -277,43 +273,55 @@ class RealTimeServiceASGI():
             client_socket, client_addr = server_socket.accept()
             streamTCPSocket = StreamTCPsocket(socket=client_socket,
                                                 address=client_addr)
-            func = self.__clientHandleThread
+            func = self.__client_handle_thread
             clientHandleThread = Thread(target=func, 
                                      args=(streamTCPSocket,))
             clientHandleThread.start()
 
     #소켓끼리 데이터 송수신
-    def recvThread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
+    def recv_thread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
         while True:
             if not ChattingRoom.is_queue_empty():
                 data = StreamTCPsocket.recv()
-                dict_data = RealtimeServiceProtocol.str_todict(data)
+                dict_data = RealtimeServiceProtocol.str_to_dict(data)
                 ChattingRoom.enqueqe(dict_data)
             else:
                 print("큐에 데이터를 넣을 준비가 되지 않았습니다.")
 
 
-    def sendThread():
+    def send_thread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
         while True:
             if not ChattingRoom.is_queue_empty():
                 data = ChattingRoom.dequeue()
                 if data == True:
                     ChattingRoom.dequeqe(data)
-                str_data = RealtimeServiceProtocol.dict_tostr(data)
+                str_data = RealtimeServiceProtocol.dict_to_str(data)
                 StreamTCPsocket.send(str_data)
             else:
                 print("큐에 전송할 데이터가 없습니다.")
    
 
-    def __clientHandleThread(self, streamTCPSocket:StreamTCPsocket):
-        #print("hello my server")
-        recv_data = streamTCPSocket.recv()
-        print(recv_data)
-        time.sleep(5)
-        #send_data = "hello"
+    def __clientHandleThread(self, streamTCPSocket:StreamTCPsocket, RealTimeServiceProtocol, ChattingRoom):
+        #send_data = "hello" 
         #send_data = send_data.encode()
         #streamTCPSocket.send(send_data)
-        print("send clear")
+        #print("send clear")
+        #print(recv_data)
+        #time.sleep(5)
+        recv_data = streamTCPSocket.recv()
+        recv_dict_data = RealtimeServiceProtocol.str_to_dict(recv_data)
+        chatting_room_api = ChattingRoomAPI()
+        #room_name받아오기
+        chatting_room_api.fine_room(room_name)
+        recv_thread = Thread(target=realTimeServiceASGI.recv_thread, 
+                         args=(streamTCPSocket, RealtimeServiceProtocol, room_name))
+        send_thread = Thread(target=realTimeServiceASGI.send_thread, 
+                         args=(streamTCPSocket, RealtimeServiceProtocol, room_name))
+        recv_thread.start()
+        send_thread.start()
+        recv_thread.join()
+        send_thread.join()
+        print("End of procedure")
         # 1. recv 한번 받기
         # 2. recv 받은 데이터 RSTP에서 데이터 변환
         # 3. 변환한 데이터 가지고 체팅방 찾기
@@ -324,7 +332,6 @@ class RealTimeServiceASGI():
         # 8. 생성한 각강의 스레드 start()
         # 9. 대기 하다가 join()
         # 10. end of procedure
-        return
 
 if __name__ == "__main__":
     realTimeServiceASGI = RealTimeServiceASGI()
