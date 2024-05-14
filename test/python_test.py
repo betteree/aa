@@ -21,7 +21,6 @@ class Client_Model():
 class Fake_DB_API():
     def __init__(self):
         self.__client_list = []
-        my_sql_pt
 
 
     def add_client(self, id, pw):

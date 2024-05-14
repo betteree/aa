@@ -1,6 +1,8 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 import queue
+import mysql.connecter
+
 
 #받고 보내고
 class StreamTCPsocket():
@@ -202,8 +204,45 @@ class ClientModel():
 
 
 class DB_API():
+    
     def __init__(self):
-        pass
+        self.mydb=mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="1017",
+            db='patient'
+        )
+        self.cursor = self.conn.cursor()
+    
+    # 값 테이블에 넣어주기
+    def insert_client(self, client):
+        query = "INSERT INTO clients (id, pw, address, name, patient_number, guardian_number) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (
+            client.get_id(),
+            client.get_pw(),
+            client.get_address(),
+            client.get_name(),
+            client.get_patientNumber(),
+            client.get_guardianNumber()
+        )
+        self.cursor.execute(query, values)
+        self.conn.commit()
+
+    #id가 디비에 있는지?
+    def check_id_exist(self, id):
+        query = "SELECT id FROM clients WHERE id = %s"
+        self.cursor.execute(query, (id,))
+        result = self.cursor.fetchone() 
+
+        if result:
+            return True  
+        else:
+            return False  
+
+    #연결종료
+    def close_connection(self):
+        self.cursor.close()
+        self.conn.close()
 
 class LoginController():
     def __init__(self,DB):
@@ -214,8 +253,7 @@ class LoginController():
         newClient =ClientModel()
         newClient.set_id(id)
         newClient.set_pw(pw)
-
-            
+      
         clientInfo = self.__db.findClient(id=newClient.getid())
         if clientInfo:
             print("아이디 존재 o")
@@ -233,7 +271,8 @@ class LoginController():
         newClient.get_pw(pw)
         newClient.get_name(name)
         newClient.get_address(address)
-        newClient.get_patientNumber(patientNumber)
+        newClient.get_patientNumber(patientNumber
+        )
         newClient.get_guardianNumber(guardianNumber)
         
         
