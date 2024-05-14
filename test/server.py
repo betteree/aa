@@ -46,7 +46,7 @@ class RealtimeServiceProtocol:
                          "PW" :"dsagdsag",
             }
 
-        #gps데이터 전송
+        #gps 데이터 전송
         elif method == "Gps":
             dict_data = {"method":"Gps",
                          "X" :"13.00",
@@ -378,6 +378,7 @@ class RealTimeServiceASGI:
         recv_thread.join()
         send_thread.join()
         print("End of procedure")
+        
         # 1. recv 한번 받기
         # 2. recv 받은 데이터 RSTP에서 데이터 변환
         # 3. 변환한 데이터 가지고 체팅방 찾기
