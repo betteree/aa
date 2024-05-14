@@ -16,7 +16,7 @@ class StreamTCPsocket():
     
     def send(self, send_data):
         self.__socket.send(send_data)
-    
+        
 
 
 #string -> dict , dict ->string
@@ -150,39 +150,33 @@ class ChattingRoom():
         self.__send_que_p.put(data)
         return
 
-
-class ClientModel():
+#클라이언트 모델
+class ClientModel:
     def __init__(self):
-        self.__id="ddfg"
-        self.__pw="avcd"
-        self.__address =="대구광역시"
-        self.__name =="홍길동"
-        self.__patientNumber="01012345678"
-        self.__guardianNumber="01009876543"
+        self.__id = ""
+        self.__pw = ""
+        self.__address = ""
+        self.__name = ""
+        self.__patientNumber = ""
+        self.__guardianNumber = ""
     
     def set_id(self, id):
         self.__id = id
-        return
-
-    def set_pw(self,pw):
-        self.__pw= pw
-        return
     
-    def set_address(self,address):
+    def set_pw(self, pw):
+        self.__pw = pw
+    
+    def set_address(self, address):
         self.__address = address
-        return
     
-    def set_name(self,name):
-        self.__name=name
-        return
+    def set_name(self, name):
+        self.__name = name
 
-    def set_patientNumber (self,patientNumber):
+    def set_patientNumber(self, patientNumber):
         self.__patientNumber = patientNumber
-        return
 
-    def set_guardianNumber (self, guardianNumber):
+    def set_guardianNumber(self, guardianNumber):
         self.__guardianNumber = guardianNumber
-        return
 
     def get_id(self):
         return self.__id
@@ -202,21 +196,19 @@ class ClientModel():
     def get_guardianNumber(self):
         return self.__guardianNumber
 
-
-class DB_API():
-    
+# DB_API 클래스
+class DB_API:
     def __init__(self):
-        self.mydb=mysql.connector.connect(
+        self.mydb = mysql.connector.connect(
             host="localhost",
             user="root",
             password="1017",
-            db='patient'
+            database='patient'
         )
-        self.cursor = self.conn.cursor()
-    
-    # 값 테이블에 넣어주기
+        self.cursor = self.mydb.cursor()
+
     def insert_client(self, client):
-        query = "INSERT INTO clients (id, pw, address, name, patient_number, guardian_number) VALUES (%s, %s, %s, %s, %s, %s)"
+        query = "INSERT INTO patient (id, pw, address, name, patient_number, guardian_number) VALUES (%s, %s, %s, %s, %s, %s)"
         values = (
             client.get_id(),
             client.get_pw(),
@@ -226,11 +218,11 @@ class DB_API():
             client.get_guardianNumber()
         )
         self.cursor.execute(query, values)
-        self.conn.commit()
+        self.mydb.commit()
+        print("회원가입이 완료되었습니다.")
 
-    #id가 디비에 있는지?
     def check_id_exist(self, id):
-        query = "SELECT id FROM clients WHERE id = %s"
+        query = "SELECT id FROM patient WHERE id = %s"
         self.cursor.execute(query, (id,))
         result = self.cursor.fetchone() 
 
@@ -239,44 +231,47 @@ class DB_API():
         else:
             return False  
 
-    #연결종료
+    def verify_password(self, id, pw):
+        query = "SELECT pw FROM patient WHERE id = %s"
+        self.cursor.execute(query, (id,))
+        result = self.cursor.fetchone()
+
+        if result and result[0] == pw:
+            return True
+        else:
+            return False
+
     def close_connection(self):
         self.cursor.close()
-        self.conn.close()
+        self.mydb.close()
 
-class LoginController():
-    def __init__(self,DB):
-        self.__DB=DB
-        return
+# LoginController 클래스
+class LoginController:
+    def __init__(self, DB):
+        self.__DB = DB
     
-    def try_login(self,id,pw):
-        newClient =ClientModel()
+    def try_login(self, id, pw):
+        if self.__DB.check_id_exist(id):
+            print("아이디 존재")
+            if self.__DB.verify_password(id, pw):
+                print("로그인 성공")
+            else:
+                print("비밀번호가 올바르지 않습니다")
+        else:
+            print("아이디 존재하지 않음")
+    
+    def sign_up(self, id, pw, name, address, patientNumber, guardianNumber):
+        newClient = ClientModel()
         newClient.set_id(id)
         newClient.set_pw(pw)
-      
-        clientInfo = self.__db.findClient(id=newClient.getid())
-        if clientInfo:
-            print("아이디 존재 o")
-            db_pw= clientInfo['password']
-            if db_pw == pw:
-                print("로그인성공")
-            else:
-                print("비밀번호 올바르지 않습니다 ")
-        else:
-            print("아이디 존재 x")
-    
-    def sign_up(self,id,pw,name,address,patientNumber,guardianNumber):
-        newClient= ClientModel()
-        newClient.get_id(id)
-        newClient.get_pw(pw)
-        newClient.get_name(name)
-        newClient.get_address(address)
-        newClient.get_patientNumber(patientNumber
-        )
-        newClient.get_guardianNumber(guardianNumber)
+        newClient.set_name(name)
+        newClient.set_address(address)
+        newClient.set_patientNumber(patientNumber)
+        newClient.set_guardianNumber(guardianNumber)
         
+        self.__DB.insert_client(newClient)
         
-    # 채팅룸을 관리하고 인터페이스를 제공하는 클래스
+# 채팅룸을 관리하고 인터페이스를 제공하는 클래스
 class ChattingRoomAPI:
     def __init__(self):
         self.chattingrooms = []  # 채팅룸 리스트
