@@ -231,7 +231,7 @@ class DB_API:
         else:
             return False  
 
-    def verify_password(self, id, pw):
+    def __verify_password(self, id, pw):
         query = "SELECT pw FROM patient WHERE id = %s"
         self.cursor.execute(query, (id,))
         result = self.cursor.fetchone()
