@@ -52,8 +52,8 @@ class DB_API:
         self.mydb = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="1017",
-            database='patient'
+            password="Dlsdbjjaang9!",
+            database='RTS'
         )
         self.cursor = self.mydb.cursor()
 

@@ -1,7 +1,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 import queue
-import mysql.connecter
+import mysql.connector
 
 
 #받고 보내고
@@ -321,7 +321,7 @@ class RealTimeServiceASGI:
         ip = "127.0.0.1"
         port = 9999
         server_socket = socket(AF_INET, SOCK_STREAM)
-        server_socket.bind(('#127.0.0.1',9999))
+        server_socket.bind(('127.0.0.1',9999))
         print(f"ip : {port}  | port = {str(port)}")
         server_socket.listen()
 
