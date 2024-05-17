@@ -11,26 +11,25 @@ class StreamTCPsocket():
         self.__address=address
 
     def recv(self):
-        data=self.__socket.recv(1024)
+        data=self.__socket.recv(1024).decode()
         return data
     
     def send(self, send_data):
-        self.__socket.send(send_data)
+        self.__socket.send(send_data.encode())
         
 
 
 #string -> dict , dict ->string
 class RealtimeServiceProtocol:
-    def __init__(self,socket:socket,address):
-        self.__socket=socket 
-        self.__address=address
+    def __init__(self):
+        return
     
     # string data를 dict로 바꾸는 친구 
     def str_to_dict(self,data:str):
         list_data=data.split(" ") 
         dict_data = self.__method_checker(list_data[0])
         i = 1
-        for k in dict_data.keys:
+        for k in dict_data.keys():
             dict_data[k] = list_data[i]
             i += 1
 
@@ -324,15 +323,15 @@ class RealTimeServiceASGI:
         server_socket.bind(('127.0.0.1',9999))
         print(f"ip : {port}  | port = {str(port)}")
         server_socket.listen()
-
+        realtimeServiceProtocol = RealtimeServiceProtocol()
         while True:
             client_socket, client_addr = server_socket.accept()
             streamTCPSocket = StreamTCPsocket(socket=client_socket,
                                                 address=client_addr)
-            func = self.__client_handle_thread
-            clientHandleThread = Thread(target=func, 
-                                     args=(streamTCPSocket,))
-            clientHandleThread.start()
+            func = self.__client_Handle_Thread
+            client_Handle_Thread = Thread(target=func, 
+                                     args=(streamTCPSocket,realtimeServiceProtocol,ChattingRoom))
+            client_Handle_Thread.start()
 
     #소켓끼리 데이터 송수신
     def recv_thread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
@@ -347,7 +346,7 @@ class RealTimeServiceASGI:
 
     def send_thread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
         while True:
-            if not CattingRoom.is_queue_empty():
+            if not ChattingRoom.is_queue_empty():
                 data = ChattingRoom.dequeue()
                 if data == True:
                     ChattingRoom.dequeqe(data)
@@ -357,7 +356,7 @@ class RealTimeServiceASGI:
                 print("큐에 전송할 데이터가 없습니다.")
    
 
-    def __clientHandleThread(self, streamTCPSocket:StreamTCPsocket, RealTimeServiceProtocol, ChattingRoom):
+    def __client_Handle_Thread(self, streamTCPSocket:StreamTCPsocket, realTimeServiceProtocol, chattingRoom):
         #send_data = "hello" 
         #send_data = send_data.encode()
         #streamTCPSocket.send(send_data)
@@ -365,14 +364,14 @@ class RealTimeServiceASGI:
         #print(recv_data)
         #time.sleep(5)
         recv_data = streamTCPSocket.recv()
-        recv_dict_data = RealtimeServiceProtocol.str_to_dict(recv_data)
+        recv_dict_data = realTimeServiceProtocol.str_to_dict(recv_data)
         chatting_room_api = ChattingRoomAPI()
         #room_name받아오기
         chatting_room_api.fine_room(room_name)
         recv_thread = Thread(target=realTimeServiceASGI.recv_thread, 
-                         args=(streamTCPSocket, RealtimeServiceProtocol, room_name))
+                         args=(streamTCPSocket, realtimeServiceProtocol, room_name))
         send_thread = Thread(target=realTimeServiceASGI.send_thread, 
-                         args=(streamTCPSocket, RealtimeServiceProtocol, room_name))
+                         args=(streamTCPSocket, realtimeServiceProtocol, room_name))
         recv_thread.start()
         send_thread.start()
         recv_thread.join()
