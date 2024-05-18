@@ -69,7 +69,7 @@ class RealtimeServiceProtocol:
     # string data를 dict로 바꾸는 친구 
     def dict_to_str(self, data:dict):
         str_data = ""
-        for value in data.values:
+        for value in data.values():
             str_data += value + " "
 
         return str_data    
@@ -141,7 +141,7 @@ class ChattingRoom():
 
     #send 큐에서 값 빼기
     def guardian_send_dequeue(self,):
-        data = self.__send_que_p.get()
+        data = self.__send_que_g.get()
         return data
    
     #send큐에서 값 넣기
@@ -267,7 +267,7 @@ class LoginController:
         newClient.set_address(address)
         newClient.set_patientNumber(patientNumber)
         newClient.set_guardianNumber(guardianNumber)
-        
+        newClient.set_pid(id)
         self.__DB.insert_client(newClient)
         
 # 채팅룸을 관리하고 인터페이스를 제공하는 클래스
@@ -276,10 +276,10 @@ class ChattingRoomAPI:
         self.chattingrooms = []  # 채팅룸 리스트
 
     #채팅룸 찾기
-    def fine_room(self, room_name):
+    def find_room(self, room_name):
         room = self.get_room(room_name) 
         if not room:
-            room = self.createroom(room_name)
+            room = self.create_room(room_name)
         return room
 
     #없으면 생성
@@ -366,12 +366,17 @@ class RealTimeServiceASGI:
         recv_data = streamTCPSocket.recv()
         recv_dict_data = realTimeServiceProtocol.str_to_dict(recv_data)
         chatting_room_api = ChattingRoomAPI()
-        #room_name받아오기
-        chatting_room_api.fine_room(room_name)
-        recv_thread = Thread(target=realTimeServiceASGI.recv_thread, 
-                         args=(streamTCPSocket, realtimeServiceProtocol, room_name))
-        send_thread = Thread(target=realTimeServiceASGI.send_thread, 
-                         args=(streamTCPSocket, realtimeServiceProtocol, room_name))
+        if 'room_name' in recv_dict_data:
+            room_name = recv_dict_data['room_name']
+        else:
+            # 방 번호가 없으면 클라이언트의 아이디를 방 번호로 사용
+            room_name = recv_dict_data['id']
+        chatting_room_api = ChattingRoomAPI()
+        chatting_room_api.find_room(room_name)
+        recv_thread = Thread(target=self.recv_thread, 
+                         args=(streamTCPSocket, realTimeServiceProtocol, room_name))
+        send_thread = Thread(target=self.send_thread, 
+                         args=(streamTCPSocket, realTimeServiceProtocol, room_name))
         recv_thread.start()
         send_thread.start()
         recv_thread.join()
