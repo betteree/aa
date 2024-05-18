@@ -274,6 +274,7 @@ class LoginController:
 class ChattingRoomAPI:
     def __init__(self):
         self.chattingrooms = []  # 채팅룸 리스트
+        self.chattingRoom = ChattingRoom()
 
     #채팅룸 찾기
     def find_room(self, room_name):
@@ -284,14 +285,14 @@ class ChattingRoomAPI:
 
     #없으면 생성
     def create_room(self, room_name):
-        newroom = ChattingRoom(room_name)
+        newroom = chattingRoom(room_name)
         self.chattingrooms.append(newroom)
         return newroom
-   
+
     #채팅룸 반환
     def get_room(self, room_name):
-        for room in self.chattingrooms:
-            if room.get_pid() == room_name:
+        for chattingRoom.get_pid in self.chattingrooms:
+            if chattingRoom.get_pid == room_name:
                 return room
         return None
 
@@ -334,9 +335,9 @@ class RealTimeServiceASGI:
             client_Handle_Thread.start()
 
     #소켓끼리 데이터 송수신
-    def recv_thread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
+    def recv_thread(self,streamTCPsocket,realTimeServiceProtocol,chattingRoom):
         while True:
-            if not ChattingRoom.is_queue_empty():
+            if not chattingRoom.is_queue_empty():
                 data = StreamTCPsocket.recv()
                 dict_data = RealtimeServiceProtocol.str_to_dict(data)
                 ChattingRoom.enqueqe(dict_data)
@@ -344,19 +345,19 @@ class RealTimeServiceASGI:
                 print("큐에 데이터를 넣을 준비가 되지 않았습니다.")
 
 
-    def send_thread(self,StreamTCPsocket,RealTimeServiceProtocol,ChattingRoom):
+    def send_thread(self,streamTCPsocket,realTimeServiceProtocol,chattingRoom):
         while True:
-            if not ChattingRoom.is_queue_empty():
-                data = ChattingRoom.dequeue()
+            if not chattingRoom.is_queue_empty():
+                data = chattingRoom.dequeue()
                 if data == True:
-                    ChattingRoom.dequeqe(data)
+                    chattingRoom.dequeqe(data)
                 str_data = RealtimeServiceProtocol.dict_to_str(data)
                 StreamTCPsocket.send(str_data)
             else:
                 print("큐에 전송할 데이터가 없습니다.")
    
 
-    def __client_Handle_Thread(self, streamTCPSocket:StreamTCPsocket, realTimeServiceProtocol, chattingRoom):
+    def __client_Handle_Thread(self, streamTCPSocket:StreamTCPsocket, realTimeServiceProtocol):
         #send_data = "hello" 
         #send_data = send_data.encode()
         #streamTCPSocket.send(send_data)
@@ -366,11 +367,12 @@ class RealTimeServiceASGI:
         recv_data = streamTCPSocket.recv()
         recv_dict_data = realTimeServiceProtocol.str_to_dict(recv_data)
         chatting_room_api = ChattingRoomAPI()
+        
         if 'room_name' in recv_dict_data:
             room_name = recv_dict_data['room_name']
         else:
-            # 방 번호가 없으면 클라이언트의 아이디를 방 번호로 사용
             room_name = recv_dict_data['id']
+
         chatting_room_api = ChattingRoomAPI()
         chatting_room_api.find_room(room_name)
         recv_thread = Thread(target=self.recv_thread, 
