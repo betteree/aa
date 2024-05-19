@@ -1,22 +1,50 @@
-from socket import socket, AF_INET, SOCK_STREAM
+class ChatRoom:
+    def __init__(self, pid):
+        self.clients = []
+        self.pid = pid
 
-def main():
-    HOST = "127.0.0.1"
-    PORT = 9999
-    client_socket = socket(AF_INET, SOCK_STREAM)
-    client_socket.connect((HOST, PORT))
+    def input_client(self, client):
+        self.clients.append(client)
 
-    message = "x:165 y:98"
-    message = message.encode()
+    def set_pid(self, pid):
+        self.pid = pid
 
-    client_socket.send(message)
+class ChatApplication:
+    def __init__(self):
+        self.chattingrooms = []
 
-    #print(len(head))
+    # 채팅룸 찾기
+    def find_room(self, room_name):
+        for room in self.chattingrooms:
+            if room.name == room_name:
+                return room
+        return None
 
-    #print(length)
+    # 클라이언트 추가하기
+    def add_client_room(self, room_name, client):
+        chattingRoom = self.find_room(room_name)
+        if not chattingRoom:
+            chattingRoom = self.create_room(room_name)
+        
+        chattingRoom.input_client(client)
+        return chattingRoom
 
-    result = client_socket.recv(1024).decode()
-    print(result)
+    # 채팅룸 생성하기
+    def create_room(self, room_name):
+        chattingRoom = ChatRoom(room_name)
+        chattingRoom.set_pid(room_name + "_id")  # Set PID to some value
+        self.chattingrooms.append(chattingRoom)
+        return chattingRoom
 
-if __name__ == "__main__":
-    main()
+# 사용 예시
+app = ChatApplication()
+new_room = app.create_room("General")
+print(f"PID:{new_room.pid}")
+
+
+new_room1 = app.create_room("aa")
+print(f"PID: {new_room1.pid}")
+
+# 다른 곳에서 PID를 사용
+print(f"Using the room's PID: {new_room.pid}")
+print(f"Using the room's PID: {new_room1.pid}")
