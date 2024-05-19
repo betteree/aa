@@ -75,80 +75,6 @@ class RealtimeServiceProtocol:
         return str_data    
 
 
-#채팅방 - 환자와 보호자 짝찾아주는 클래스? 하나의 방 느낌
-class ChattingRoom():
-
-    def __init__(self, pid):
-        self.__pid = pid
-        self.__recv_que_p = queue.Queue()
-        self.__send_que_p = queue.Queue()
-        self.__recv_que_g = queue.Queue()
-        self.__recv_que_g = queue.Queue()
-        self.__client = []
-
-    def input_client(self, client):
-        self.__client.append(client)
-        return 
-
-    def set_pid(self, pid):
-        self.__pid = pid
-
-    def get_pid(self):
-        return self.__pid
-
-    ############환자###############        
-   #큐에 비어있는지? 
-    def patient_is_queue_empty(self):
-        result = self.__send_que_p.empty()
-        return result
-
-    #recv큐에서 값 빼기
-    def patient_recv_dequeue(self,):
-        data = self.__recv_que_p.get()
-        return data
-   
-    #recv큐에 값 넣기
-    def patient_recv_enqueue(self, data):
-        self.__recv_que_p.put(data)
-        return
-
-    #send큐에 값 빼기 
-    def patient_send_dequeue(self,):
-        data = self.__send_que_p.get()
-        return data
-   
-    #send큐에 값 넣기 
-    def patient_send_enqueue(self, data):
-        self.__send_que_p.put(data)
-        return
-    
-    #############보호자쪽###############
-
-    #보호자 큐 비어있는지 확인 
-    def guardian_is_queue_empty(self):
-        result = self.__send_que_g.empty()
-        return result
-
-    #recv 큐에서 값 빼기
-    def guardian_recv_dequeue(self,):
-        data = self.__recv_que_g.get()
-        return data
-   
-    #recv 큐에서 값 넣기
-    def guardian_recv_enqueue(self, data):
-        self.__recv_que_g.put(data)
-        return
-
-    #send 큐에서 값 빼기
-    def guardian_send_dequeue(self,):
-        data = self.__send_que_g.get()
-        return data
-   
-    #send큐에서 값 넣기
-    def guardian_send_enqueue(self, data):
-        self.__send_que_p.put(data)
-        return
-
 #클라이언트 모델
 class ClientModel:
     def __init__(self):
@@ -269,42 +195,115 @@ class LoginController:
         newClient.set_guardianNumber(guardianNumber)
         newClient.set_pid(id)
         self.__DB.insert_client(newClient)
-        
+
+#채팅방 - 환자와 보호자 짝찾아주는 클래스? 하나의 방 느낌        
+class ChattingRoom():
+
+    def __init__(self, pid):
+        self.__pid = pid
+        self.__recv_que_p = queue.Queue()
+        self.__send_que_p = queue.Queue()
+        self.__recv_que_g = queue.Queue()
+        self.__recv_que_g = queue.Queue()
+        self.__client = []
+
+    def input_client(self, client):
+        self.__client.append(client)
+        return 
+
+    def set_pid(self, pid):
+        self.__pid = pid
+
+    def get_pid(self):
+        return self.__pid
+
+    ############환자###############        
+   #큐에 비어있는지? 
+    def patient_is_queue_empty(self):
+        result = self.__send_que_p.empty()
+        return result
+
+    #recv큐에서 값 빼기
+    def patient_recv_dequeue(self,):
+        data = self.__recv_que_p.get()
+        return data
+   
+    #recv큐에 값 넣기
+    def patient_recv_enqueue(self, data):
+        self.__recv_que_p.put(data)
+        return
+
+    #send큐에 값 빼기 
+    def patient_send_dequeue(self,):
+        data = self.__send_que_p.get()
+        return data
+   
+    #send큐에 값 넣기 
+    def patient_send_enqueue(self, data):
+        self.__send_que_p.put(data)
+        return
+    
+    #############보호자쪽###############
+
+    #보호자 큐 비어있는지 확인 
+    def guardian_is_queue_empty(self):
+        result = self.__send_que_g.empty()
+        return result
+
+    #recv 큐에서 값 빼기
+    def guardian_recv_dequeue(self,):
+        data = self.__recv_que_g.get()
+        return data
+   
+    #recv 큐에서 값 넣기
+    def guardian_recv_enqueue(self, data):
+        self.__recv_que_g.put(data)
+        return
+
+    #send 큐에서 값 빼기
+    def guardian_send_dequeue(self,):
+        data = self.__send_que_g.get()
+        return data
+   
+    #send큐에서 값 넣기
+    def guardian_send_enqueue(self, data):
+        self.__send_que_p.put(data)
+        return
+
 # 채팅룸을 관리하고 인터페이스를 제공하는 클래스
 class ChattingRoomAPI:
     def __init__(self):
         self.chattingrooms = []  # 채팅룸 리스트
-        self.chattingRoom = ChattingRoom()
 
     #채팅룸 찾기
     def find_room(self, room_name):
-        room = self.get_room(room_name) 
-        if not room:
-            room = self.create_room(room_name)
-        return room
+        for room in self.chattingrooms:
+            if room == room_name:
+                return room
+        return False
 
-    #없으면 생성
+    
+    #채팅룸이 없으면 생성하기 
     def create_room(self, room_name):
-        newroom = chattingRoom(room_name)
+        chattingRoom =ChattingRoom(room_name)
+        chattingRoom.set_pid(room_name)
+
         self.chattingrooms.append(newroom)
-        return newroom
+        return chattingRoom
 
     #채팅룸 반환
     def get_room(self, room_name):
-        for chattingRoom.get_pid in self.chattingrooms:
-            if chattingRoom.get_pid == room_name:
-                return room
-        return None
+        return self.find_room(room_name)
 
     #클라이언트 추가하기
     def add_client_room(self, room_name, client):
-        room = self.create_room(room_name)
-        room.add_client(client)
+        chattingRoom = self.find_room(room_name)
+        if not chattingRoom:
+            chattingRoom = self.create_room(room_name)
+        chattingRoom.input_client(client)
+        return chattingRoom
 
-    #비어있는지 확인하기
-    def room_empty(self, room_name):
-        room = self.find_room(room_name)
-        return room.is_empty()
+
     
 import time
 #비동기서버 만드는 인터페이스
@@ -331,7 +330,7 @@ class RealTimeServiceASGI:
                                                 address=client_addr)
             func = self.__client_Handle_Thread
             client_Handle_Thread = Thread(target=func, 
-                                     args=(streamTCPSocket,realtimeServiceProtocol,ChattingRoom))
+                                     args=(streamTCPSocket,realtimeServiceProtocol))
             client_Handle_Thread.start()
 
     #소켓끼리 데이터 송수신
@@ -360,29 +359,35 @@ class RealTimeServiceASGI:
     def __client_Handle_Thread(self, streamTCPSocket:StreamTCPsocket, realTimeServiceProtocol):
         #send_data = "hello" 
         #send_data = send_data.encode()
-        #streamTCPSocket.send(send_data)
+        #streamTCPSocket.send(send_data)        
         #print("send clear")
         #print(recv_data)
         #time.sleep(5)
+
         recv_data = streamTCPSocket.recv()
         recv_dict_data = realTimeServiceProtocol.str_to_dict(recv_data)
         chatting_room_api = ChattingRoomAPI()
-        
-        if 'room_name' in recv_dict_data:
-            room_name = recv_dict_data['room_name']
-        else:
-            room_name = recv_dict_data['id']
 
-        chatting_room_api = ChattingRoomAPI()
-        chatting_room_api.find_room(room_name)
+        room_name = recv_dict_data['id']
+        client = recv_dict_data['who']
+        
+        if chatting_room_api.find_room(room_name):
+            chatiing_room_api.add_client_room(room_name)
+        else:
+            chatting_room_api.create_room(room_name)
+            chatting_room_api.add_client_room(room_name,who)
+    
         recv_thread = Thread(target=self.recv_thread, 
                          args=(streamTCPSocket, realTimeServiceProtocol, room_name))
         send_thread = Thread(target=self.send_thread, 
                          args=(streamTCPSocket, realTimeServiceProtocol, room_name))
+
+
         recv_thread.start()
         send_thread.start()
         recv_thread.join()
         send_thread.join()
+
         print("End of procedure")
         
         # 1. recv 한번 받기
