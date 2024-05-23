@@ -13,13 +13,13 @@ class LoginController:
         # result = {type, id, result}
         result = {}
         
-        # 테스트용 코드
-        result['id'] = id
-        result['result'] = True
-        result['type'] = client_type 
+        #  테스트용 코드
+        # result['id'] = id
+        # result['result'] = True
+        # result['type'] = client_type 
         
-        return result
-        # 테스트 끝
+        # return result
+        #  테스트 끝
         
         if self.__dbAPI.check_id_exist(id):
             print("아이디 존재")
@@ -37,13 +37,13 @@ class LoginController:
         return result
         
     
-    def sign_up(self, id, pw, name, address, patientNumber, guardianNumber):
-        newClient = ClientModel()
-        newClient.set_id(id)
-        newClient.set_pw(pw)
-        newClient.set_name(name)
-        newClient.set_address(address)
-        newClient.set_patientNumber(patientNumber)
-        newClient.set_guardianNumber(guardianNumber)
-        newClient.set_pid(id)
-        self.__DB.insert_client(newClient)
+    # def sign_up(self, id, pw, name, address, patientNumber, guardianNumber):
+    #     newClient = ClientModel()
+    #     newClient.set_id(id)
+    #     newClient.set_pw(pw)
+    #     newClient.set_name(name)
+    #     newClient.set_address(address)
+    #     newClient.set_patientNumber(patientNumber)
+    #     newClient.set_guardianNumber(guardianNumber)
+    #     newClient.set_pid(id)
+    #     self.__DB.insert_client(newClient)

@@ -9,7 +9,7 @@ def main():
     client_socket = socket(AF_INET, SOCK_STREAM)
     client_socket.connect((HOST, PORT))
     
-    request = "Login qwer qwer patient"
+    request = "Login 123 add patient"
     request = request.encode()
     client_socket.sendall(request)
     
@@ -28,7 +28,7 @@ def main():
 def send(client_socket:socket, flag):
     while flag[0]:
         time.sleep(1)
-        request = "GPS 13.24 89.7"
+        request = "GPS 128.80000111622303 36.4552517554429"
         request = request.encode()
         client_socket.send(request)
 
