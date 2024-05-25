@@ -8,14 +8,15 @@ class GPSSaveLogic():
         self.__db = DB_API()
         return
     
-    def is_save_GPS(self, gps_data:dict):
+    def is_save_GPS(self, gps_data:dict,id_patient):
         
         if self.__count < 5:
             self.__count += 1
             return
-        #id_patient = gps_data['ID']  
+         
+        
         load_name = self.__kakao_api(gps_data)
-        self.__db.save_gps_data(load_name)
+        self.__db.save_gps_data(load_name,id_patient)
         print("gps 저장합니다요 : ", load_name)
         self.__count = 0
         return

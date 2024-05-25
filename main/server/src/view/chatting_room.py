@@ -33,7 +33,8 @@ class ChattingRoom():
             result = self.__is_patient_recvque_empty()
             if not result:
                 dict_data = self.__recv_patient_deque()
-                self.__gps_save_logic.is_save_GPS(dict_data)
+                id_patient = self.__chatting_room_name
+                self.__gps_save_logic.is_save_GPS(dict_data,id_patient)
         return
 
     def recv_gardian_enque(self, data):

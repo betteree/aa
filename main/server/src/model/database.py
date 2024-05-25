@@ -33,55 +33,55 @@ class DB_API:
         else:
             return False
         
-    def save_gps_data(self, load_name):
-        query = "INSERT INTO location (repeated_Location) VALUES (%s)"
-        values = (
-            load_name,
-         )
-        self.cursor.execute(query, values)
-        self.mydb.commit()
-        
-        # # 1. location 테이블에 해당 장소가 있는지 확인합니다.
-        # select_query = "SELECT id_Location FROM location WHERE repeated_Location = %s"
-        # self.cursor.execute(select_query, (load_name,))
-        # location_data = self.cursor.fetchone()
-
-        # if location_data:  # 장소가 이미 있는 경우
-        #     location_id = location_data[0]
-
-        #     # 2. visit 테이블에 해당 장소와 환자가 있는지 확인합니다.
-        #     select_visit_query = "SELECT counting FROM visit WHERE id_Location = %s AND id_Patient = %s"
-        #     self.cursor.execute(select_visit_query, (location_id, id_patient))
-        #     visit_data = self.cursor.fetchone()
-
-        #     if visit_data:  # 장소와 환자가 있는 경우
-        #         # 해당 장소와 환자의 counting을 증가시킵니다.
-        #         update_visit_query = "UPDATE visit SET counting = counting + 1 WHERE id_Location = %s AND id_Patient = %s"
-        #         self.cursor.execute(update_visit_query, (location_id, id_patient))
-        #         print("Visit count updated.")
-        #     else:  # 장소와 환자가 없는 경우
-        #         # visit 테이블에 새로운 행을 추가합니다.
-        #         insert_visit_query = "INSERT INTO visit (id_Patient, id_Location, counting) VALUES (%s, %s, 1)"
-        #         self.cursor.execute(insert_visit_query, (id_patient, location_id))
-        #         print("New visit entry added.")
-        # else:  # 장소가 없는 경우
-        #     # 3. location 테이블에 장소를 추가합니다.
-        #     insert_location_query = "INSERT INTO location (repeated_Location) VALUES (%s)"
-        #     self.cursor.execute(insert_location_query, (load_name,))
-        #     self.mydb.commit()
-
-        #     # 삽입된 위치의 id_Location 값을 가져옵니다.
-        #     get_location_id_query = "SELECT id_Location FROM location WHERE repeated_Location = %s"
-        #     self.cursor.execute(get_location_id_query, (load_name,))
-        #     location_id = self.cursor.fetchone()[0]
-
-        #     # 4. visit 테이블에 새로운 행을 추가합니다.
-        #     insert_visit_query = "INSERT INTO visit (id_Patient, id_Location, counting) VALUES (%s, %s, 1)"
-        #     self.cursor.execute(insert_visit_query, (id_patient, location_id))
-        #     print("New location and visit entry added.")
-
-        # # 변경 사항을 커밋합니다.
+    def save_gps_data(self, load_name,id_patient):
+        # query = "INSERT INTO location (repeated_Location) VALUES (%s)"
+        # values = (
+        #     load_name,
+        #  )
+        # self.cursor.execute(query, values)
         # self.mydb.commit()
+        
+        # 1. location 테이블에 해당 장소가 있는지 확인합니다.
+        select_query = "SELECT id_Location FROM location WHERE repeated_Location = %s"
+        self.cursor.execute(select_query, (load_name,))
+        location_data = self.cursor.fetchone()
+
+        if location_data:  # 장소가 이미 있는 경우
+            location_id = location_data[0]
+
+            # 2. visit 테이블에 해당 장소와 환자가 있는지 확인합니다.
+            select_visit_query = "SELECT counting FROM visit WHERE id_Location = %s AND id_Patient = %s"
+            self.cursor.execute(select_visit_query, (location_id, id_patient))
+            visit_data = self.cursor.fetchone()
+
+            if visit_data:  # 장소와 환자가 있는 경우
+                # 해당 장소와 환자의 counting을 증가시킵니다.
+                update_visit_query = "UPDATE visit SET counting = counting + 1 WHERE id_Location = %s AND id_Patient = %s"
+                self.cursor.execute(update_visit_query, (location_id, id_patient))
+                print("Visit count updated.")
+            else:  # 장소와 환자가 없는 경우
+                # visit 테이블에 새로운 행을 추가합니다.
+                insert_visit_query = "INSERT INTO visit (id_Patient, id_Location, counting) VALUES (%s, %s, 1)"
+                self.cursor.execute(insert_visit_query, (id_patient, location_id))
+                print("New visit entry added.")
+        else:  # 장소가 없는 경우
+            # 3. location 테이블에 장소를 추가합니다.
+            insert_location_query = "INSERT INTO location (repeated_Location) VALUES (%s)"
+            self.cursor.execute(insert_location_query, (load_name,))
+            self.mydb.commit()
+
+            # 삽입된 위치의 id_Location 값을 가져옵니다.
+            get_location_id_query = "SELECT id_Location FROM location WHERE repeated_Location = %s"
+            self.cursor.execute(get_location_id_query, (load_name,))
+            location_id = self.cursor.fetchone()[0]
+
+            # 4. visit 테이블에 새로운 행을 추가합니다.
+            insert_visit_query = "INSERT INTO visit (id_Patient, id_Location, counting) VALUES (%s, %s, 1)"
+            self.cursor.execute(insert_visit_query, (id_patient, location_id))
+            print("New location and visit entry added.")
+
+        # 변경 사항을 커밋합니다.
+        self.mydb.commit()
 
 
     
@@ -97,7 +97,21 @@ class DB_API:
         predict_location = cursor.fetchall()
         
         return predict_location
-          
+    
+    def imfomation_data(self,id_patient):
+        query = """
+            SELECT patient.name, patient.address, guardian.guardianNumber
+            FROM patient
+            INNER JOIN guardian ON patient.id= guardian.id
+            WHERE patient.id = %s;
+            """
+
+        # 쿼리 실행
+        cursor.execute(query, (id_patient,))
+        imformation_result = cursor.fetchall()
+        
+        return imformation_result
+    
     def close_connection(self):
         self.cursor.close()
         self.mydb.close()

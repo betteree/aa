@@ -9,7 +9,7 @@ def main():
     client_socket = socket(AF_INET, SOCK_STREAM)
     client_socket.connect((HOST, PORT))
     
-    request = "Login 123 add gardian"
+    request = "Login 456 ssk gardian"
     request = request.encode()
     client_socket.sendall(request)
     
