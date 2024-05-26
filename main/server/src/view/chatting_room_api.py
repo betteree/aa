@@ -29,3 +29,5 @@ class ChattingRoomAPI:
         chattingRoom =ChattingRoom(room_name)
         self.__chatting_room_list.append(chattingRoom)
         return chattingRoom
+    
+    

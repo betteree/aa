@@ -6,9 +6,11 @@ class PredictPlaceLogic():
         self.__dbAPI = DB_API()
         return
     
-    def predict(self):
+    def predict(self, id_patient):
         # gps_data = ['imdang', 'sampung', 'zoyoung']
-        gps_data:list = self.__dbAPI.get_gps_data()
+        
+        gps_data:list = self.__dbAPI.get_gps_data(id_patient)
+        print("gps",gps_data)
         logic_data = {"method" : "predict",
                       "place1" : gps_data[0],
                       "place2" : gps_data[1],

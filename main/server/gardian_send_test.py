@@ -26,8 +26,13 @@ def main():
     recv_thread.join()
 
 def send(client_socket:socket, flag):
+    i = 0
     while flag[0]:
-        time.sleep(1)
+        time.sleep(0.5)
+        i += 1
+        if i > 10:
+            client_socket.send("predict".encode())
+            i = 0
         
 
 def recv(client_socket:socket, flag):

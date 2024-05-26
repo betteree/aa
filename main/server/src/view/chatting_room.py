@@ -24,9 +24,9 @@ class ChattingRoom():
             result = True
             result = self.__is_gardian_recvque_empty()
             if not result:
-                dict_data = self.__recv_gardian_deque()
+                _= self.__recv_gardian_deque()
                 predict_place_logic = PredictPlaceLogic()
-                logic_data = predict_place_logic.predict()
+                logic_data = predict_place_logic.predict(self.get_room_name())
                 self.send_gardian_enque(logic_data)
                 
             result = True
@@ -37,6 +37,18 @@ class ChattingRoom():
                 self.__gps_save_logic.is_save_GPS(dict_data,id_patient)
         return
 
+    def queue_clear(self,):
+        for i in range(self.__recv_gardian_que.qsize()):
+            _ = self.__recv_gardian_que.get_nowait()
+        for i in range(self.__recv_patient_que.qsize()):
+            _ = self.__recv_patient_que.get_nowait()
+        for i in range(self.__send_gardian_que.qsize()):
+            _ = self.__send_gardian_que.get_nowait()
+        for i in range(self.__send_patient_que.qsize()):
+            _ = self.__send_patient_que.get_nowait()
+        
+        return
+        
     def recv_gardian_enque(self, data):
         self.__recv_gardian_que.put(data)
         return

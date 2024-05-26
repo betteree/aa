@@ -50,6 +50,7 @@ class RealTimeServiceASGI:
         streamTCPSocket.set_user_type(user_type= user_data['type'])
         
         found_chatting_room = chattingRoomAPI.find_chatting_room(user_data['id'])
+        found_chatting_room.queue_clear()
         recv_thread = Thread(target=self.__recvThread,
                              args=(streamTCPSocket, found_chatting_room))
         send_thread = Thread(target=self.__sendThread,
@@ -66,7 +67,6 @@ class RealTimeServiceASGI:
     def __recvThread(self, streamTCPSocket:StreamTCPsocket,
                      chatting_room:ChattingRoom):
         user = streamTCPSocket.get_user_type()
-        print(f"user : {user}",chatting_room)
         while True:
             dict_data = streamTCPSocket.recv()
             #print('recv_thread dict_data : ', dict_data)

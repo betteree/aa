@@ -85,18 +85,33 @@ class DB_API:
 
 
     
-    def get_gps_data(self,):
-        query = """
-        SELECT location
+    def get_gps_data(self,id_patient):
+            
+        # 첫 번째 쿼리: visit 테이블에서 id_Location 값을 가져옴
+        query1 = """
+        SELECT id_Location
         FROM visit
+        WHERE id_Patient = %s
         ORDER BY counting DESC
-        LIMIT 3 OFFSET 3;
+        LIMIT 3;
         """
-        
-        cursor.execute(query)
-        predict_location = cursor.fetchall()
-        
-        return predict_location
+        self.cursor.execute(query1, (id_patient,))
+        id_locations = self.cursor.fetchall()
+
+        # id_Location 값을 사용하여 location 테이블에서 repeated_Location 값을 가져옴
+        locations = []
+        for id_location in id_locations:
+            query2 = """
+            SELECT repeated_Location
+            FROM location
+            WHERE id_Location = %s;
+            """
+            self.cursor.execute(query2, (id_location[0],))
+            location = self.cursor.fetchone()
+            if location:
+                locations.append(location[0])
+
+        return locations
     
     def imfomation_data(self,id_patient):
         query = """
@@ -107,8 +122,8 @@ class DB_API:
             """
 
         # 쿼리 실행
-        cursor.execute(query, (id_patient,))
-        imformation_result = cursor.fetchall()
+        self.cursor.execute(query, (id_patient,))
+        imformation_result = self.cursor.fetchall()
         
         return imformation_result
     
