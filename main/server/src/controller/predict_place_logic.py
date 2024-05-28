@@ -12,9 +12,9 @@ class PredictPlaceLogic():
         gps_data:list = self.__dbAPI.get_gps_data(id_patient)
         print("gps",gps_data)
         logic_data = {"method" : "predict",
-                      "place1" : gps_data[0],
-                      "place2" : gps_data[1],
-                      "place3" : gps_data[2],
+                      "place1" : gps_data[0] + ',',
+                      "place2" : gps_data[1] + ',',
+                      "place3" : gps_data[2] + ',',
                       }
         return logic_data
     

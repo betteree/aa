@@ -4,7 +4,7 @@ from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM
 def main():
 
-    HOST = "127.0.0.1"
+    HOST = "172.20.10.3"
     PORT = 9999
     client_socket = socket(AF_INET, SOCK_STREAM)
     client_socket.connect((HOST, PORT))
