@@ -1,6 +1,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
-HOST = '172.20.10.3'
+import time
+HOST = '172.20.47.117'
 PORT = 9999
 
 from view.RSP import RealtimeServiceProtocol
@@ -67,7 +68,9 @@ class RealTimeServiceASGI:
     def __recvThread(self, streamTCPSocket:StreamTCPsocket,
                      chatting_room:ChattingRoom):
         user = streamTCPSocket.get_user_type()
+        
         while True:
+            time.sleep(1)
             dict_data = streamTCPSocket.recv()
             #print('recv_thread dict_data : ', dict_data)
             if user == 'gardian':
@@ -82,6 +85,7 @@ class RealTimeServiceASGI:
         user = streamTCPSocket.get_user_type()
         print(f"user : {user}",chatting_room)
         while True:
+            time.sleep(1)
             result = True
             dict_data = None
             

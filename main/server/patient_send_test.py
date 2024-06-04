@@ -4,12 +4,12 @@ from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM
 def main():
 
-    HOST = "172.20.10.3"
+    HOST = "172.20.47.117"
     PORT = 9999
     client_socket = socket(AF_INET, SOCK_STREAM)
     client_socket.connect((HOST, PORT))
     
-    request = "Login 456 ssk patient"
+    request = "Login ID00001 pw123456 patient"
     request = request.encode()
     client_socket.sendall(request)
     
