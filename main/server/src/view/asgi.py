@@ -1,7 +1,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 import time
-HOST = '172.20.47.117'
+HOST = '172.30.1.66'
 PORT = 9999
 
 from view.RSP import RealtimeServiceProtocol

@@ -4,7 +4,7 @@ from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM
 def main():
 
-    HOST = "172.20.47.117"
+    HOST = "192.168.0.3"
     PORT = 9999
     client_socket = socket(AF_INET, SOCK_STREAM)
     client_socket.connect((HOST, PORT))
@@ -38,8 +38,8 @@ def send(client_socket:socket, flag):
 def recv(client_socket:socket, flag):
     while flag[0]:
         time.sleep(0.5)
-        recv_data = client_socket.recv(1024)
-        print(recv_data.decode())
+        # recv_data = client_socket.recv(1024)
+        # print(recv_data.decode())
 
 
 if __name__ == "__main__":

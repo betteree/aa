@@ -9,7 +9,7 @@ def main():
     client_socket = socket(AF_INET, SOCK_STREAM)
     client_socket.connect((HOST, PORT))
     
-    request = "Login ID00004 pwqwerty gardian"
+    request = "Login ID0008 pw098765 gardian"
     request = request.encode()
     client_socket.sendall(request)
     
@@ -37,7 +37,7 @@ def send(client_socket:socket, flag):
 
 def recv(client_socket:socket, flag):
     while flag[0]:
-        # time.sleep(0.5)
+        time.sleep(0.5)
         # recv_data = client_socket.recv(1024)
         # print(recv_data.decode())
 
